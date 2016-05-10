@@ -9,5 +9,5 @@ Free feel to use.
 
 ## Credit Idea
 
-Credit to original idea to Saved.io [Laravel website](http://saved.io).
+Credit to original idea to Saved.io [Saved.io website](http://saved.io).
 
