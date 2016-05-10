@@ -14,6 +14,7 @@ Example demo is [here](http://co.generateyourprofile.com).
 Demo login details -
 
 Email    : demo@demo.com
+
 Password : password
 
 
