@@ -5,7 +5,6 @@ Easily make the bookmark
 Able to easily manage the bookmark. Able to access anywhere and any device.
 
 Using Laravel 5.2.
-Free feel to use.
 
 ## Demo
 
