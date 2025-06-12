@@ -2,35 +2,31 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class AppServiceProvider extends ServiceProvider
 {
     /**
-     * Bootstrap any application services.
-     *
-     * @return void
+     * Register any application services.
      */
-    public function boot()
+    public function register(): void
     {
-        app('view')->composer('layouts.master', function ($view) {
-            $action = app('request')->route()->getAction();
-
-            $controller = class_basename($action['controller']);
-
-            list($controller, $action) = explode('@', $controller);
-
-            $view->with(compact('controller', 'action'));
-        });
+        //
     }
 
     /**
-     * Register any application services.
-     *
-     * @return void
+     * Bootstrap any application services.
      */
-    public function register()
+    public function boot(): void
     {
-        //
+        Vite::prefetch(concurrency: 3);
+        Inertia::share([
+            'auth' => fn () => [
+                'user' => Auth::user(),
+            ],
+        ]);
     }
 }

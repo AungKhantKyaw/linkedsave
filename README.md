@@ -15,16 +15,6 @@ Just type **domain name and ?save=** infront of any URL. Example : **domain.com/
 DONE. Will you see your first bookmark.
 
 
-## Demo
-
-Example demo is [here](http://co.generateyourprofile.com).
-
-Demo login details -
-
-Email    : demo@demo.com
-
-Password : **password**
-
 
 ## Credit Idea
 
