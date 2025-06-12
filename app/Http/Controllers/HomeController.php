@@ -2,82 +2,55 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests;
 use Illuminate\Http\Request;
-use Auth;
-use App\Save_link;
-use Session;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
+use App\Models\SaveLink;
 
 class HomeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-
-    public function __construct()
+    public function index(Request $request)
     {
-        //$this->middleware('auth');
-    }
+        $urlToSave = $request->query('save');
 
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        if(isset($_GET['save'])){
-            $saurl = $_GET['save'];
-        }else{
-            $saurl = '';
+        // No save param, just show homepage
+        if (!$urlToSave) {
+            return Inertia::render('Homepage');
         }
-        //echo $saurl;
-        if($saurl == ''){
-            return view('homepage');    
-        }
-        else{          
-            if (Auth::check()) {
-                $user_id = Auth::user()->id;
-                
-                $slink = new Save_link;
-                $slink->user_id = $user_id;
-                $slink->link_url = $saurl;
-                $slink->save();
-                //return view('success');
-                Session::flash('flash_message', 'Successfully added!');
-                return redirect()->action('BookmarkController@listing', [$user_id]);
-                //return redirect()->route('bookmark.listing', array('user_id' => $user_id));
-                //Redirect::route('bookmark.index',array('user_id' => $user_id,'msg' =>'Success'));
-            }else{
-                Session::flash('flash_message', 'Need to Login');
-                return redirect()->action('UserLoginController@index');     
+
+        // If user is logged in
+        if (Auth::check()) {
+            $user = Auth::user();
+
+            // Check if the link already exists for this user
+            $exists = SaveLink::where('user_id', $user->id)
+                ->where('link_url', $urlToSave)
+                ->exists();
+
+            if (!$exists) {
+                SaveLink::create([
+                    'user_id' => $user->id,
+                    'link_url' => $urlToSave,
+                ]);
+
+                return redirect()
+                    ->route('bookmark.listing', ['id' => $user->id])
+                   ->with('flash', ['message' => 'DONE. Bookmark saved.']);
             }
+
+            return redirect()
+                ->route('bookmark.listing', ['id' => $user->id])
+                ->with('flash', ['message' => 'Bookmark already exists.']);
         }
+
+        // User is not logged in
+        return redirect()
+            ->route('user_login.index')
+            ->with('flash', ['message' => 'You need to log in first to save bookmarks.']);
     }
 
-    public function show($parm = FALSE){
-        // if(isset($parm)){
-        //     if($parm != ''){
-        //         //$user = Auth::user();
-        //         if (Auth::check()) {
-        //             $user_id = Auth::user()->id;
-        //             //echo $_GET['save'];
-        //             echo $parm;
-        //             //echo $uri = $this->request->path();
-
-        //             exit;
-
-
-        //         }else{
-        //             echo 'go back';
-        //         }
-        //     }else{
-        //         return view('homepage');    
-        //     }
-        // }else{
-        //     echo 'here we go';
-        // }
+    public function dashboard()
+    {
+        return Inertia::render('Dashboard');
     }
 }
